@@ -50,6 +50,7 @@ function Write-Box {
 
 $computerName = $env:COMPUTERNAME
 $currentUser  = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+$currentDateTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 
 try {
     $cs = Get-CimInstance Win32_ComputerSystem -ErrorAction Stop
@@ -89,7 +90,8 @@ Write-Host ""
 $systemLines = @(
     "Computer Name : $computerName",
     "$netLabel       : $netName",
-    "Logged On User : $currentUser"
+    "Logged On User : $currentUser",
+    "Date and Time  : $currentDateTime"
 )
 
 Write-Box -Title 'System Information' -Lines $systemLines
@@ -242,6 +244,7 @@ if ($failed -eq 0) {
     Write-Color "============================================================" 'Green'
     Write-Color "                 ALL CHECKS PASSED" 'Green'
     Write-Color "============================================================" 'Green'
+    Write-Color "You are ready to record a video walkthough of the assignment." 'Cyan'
 
 }
 else {
@@ -249,9 +252,6 @@ else {
     Write-Color "============================================================" 'Red'
     Write-Color "             SOME CHECKS NEED ATTENTION" 'Yellow'
     Write-Color "============================================================" 'Red'
+    Write-Color "Please review the failed checks above and make corrections before recording your walkthrough video." 'Cyan'
 
 }
-
-Write-Host ""
-Write-Color "Checker complete. Take your screenshot showing this window." 'Cyan'
-Write-Host ""
