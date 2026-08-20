@@ -41,9 +41,6 @@ function Write-Box {
     Write-Color $border 'Green'
 }
 
-# Clear the console for a clean start
-Clear-Host
-
 
 # ----------------------------
 # Collect System Information
