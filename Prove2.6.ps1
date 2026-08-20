@@ -4,8 +4,6 @@
 #
 # irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove2.6.ps1 | iex
 #
-# Add or modify assignment checks in the $tests array near
-# the bottom of this script.
 # ============================================================
 
 # ----------------------------
@@ -43,6 +41,9 @@ function Write-Box {
     Write-Color $border 'Green'
 }
 
+# Clear the console for a clean start
+Clear-Host
+
 
 # ----------------------------
 # Collect System Information
@@ -51,6 +52,7 @@ function Write-Box {
 $computerName = $env:COMPUTERNAME
 $currentUser  = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $currentDateTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+$isWindowsEC2 = $false
 
 try {
     $cs = Get-CimInstance Win32_ComputerSystem -ErrorAction Stop
@@ -69,6 +71,26 @@ catch {
     $netName  = $env:USERDOMAIN
     $netLabel = 'Domain/Workgroup'
     $isDomain = $false
+}
+
+try {
+    $os = Get-CimInstance Win32_OperatingSystem -ErrorAction Stop
+    $imdsToken = Invoke-RestMethod `
+        -Uri 'http://169.254.169.254/latest/api/token' `
+        -Method Put `
+        -Headers @{ 'X-aws-ec2-metadata-token-ttl-seconds' = '60' } `
+        -TimeoutSec 2 `
+        -ErrorAction Stop
+    $instanceId = Invoke-RestMethod `
+        -Uri 'http://169.254.169.254/latest/meta-data/instance-id' `
+        -Headers @{ 'X-aws-ec2-metadata-token' = $imdsToken } `
+        -TimeoutSec 2 `
+        -ErrorAction Stop
+
+    $isWindowsEC2 = ($os.Caption -match 'Windows') -and ($instanceId -match '^i-[a-z0-9]+$')
+}
+catch {
+    $isWindowsEC2 = $false
 }
 
 
@@ -118,13 +140,28 @@ $context = @{
     NetName      = $netName
     IsDomain     = $isDomain
     CurrentUser  = $currentUser
+    IsWindowsEC2 = $isWindowsEC2
 }
 
 
 $tests = @(
 
     # --------------------------------------------------------
-    # CHECK 1 - Computer Name
+    # CHECK 1 - Windows EC2 Instance
+    # --------------------------------------------------------
+
+    @{
+        Name   = "Machine is a Windows EC2 instance"
+        Expect = "Windows operating system running on an EC2 instance"
+        Test   = {
+            param($c)
+
+            $c.IsWindowsEC2 -eq $true
+        }
+    },
+
+    # --------------------------------------------------------
+    # CHECK 2 - Computer Name
     # --------------------------------------------------------
 
     @{
@@ -253,5 +290,6 @@ else {
     Write-Color "             SOME CHECKS NEED ATTENTION" 'Yellow'
     Write-Color "============================================================" 'Red'
     Write-Color "Please review the failed checks above and make corrections before recording your walkthrough video." 'Cyan'
+    Write-Color "It is possible that some 'Failed' checks may be due to environmental factors and not a real issue." 'Cyan'
 
 }
