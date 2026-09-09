@@ -50,6 +50,7 @@ $computerName = $env:COMPUTERNAME
 $currentUser  = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $currentDateTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 $isWindowsEC2 = $false
+$region = 'Unavailable'
 
 try {
     $cs = Get-CimInstance Win32_ComputerSystem -ErrorAction Stop
@@ -83,11 +84,22 @@ try {
         -Headers @{ 'X-aws-ec2-metadata-token' = $imdsToken } `
         -TimeoutSec 2 `
         -ErrorAction Stop
-
     $isWindowsEC2 = ($os.Caption -match 'Windows') -and ($instanceId -match '^i-[a-z0-9]+$')
+
+    try {
+        $region = Invoke-RestMethod `
+            -Uri 'http://169.254.169.254/latest/meta-data/placement/region' `
+            -Headers @{ 'X-aws-ec2-metadata-token' = $imdsToken } `
+            -TimeoutSec 2 `
+            -ErrorAction Stop
+    }
+    catch {
+        $region = 'Unavailable'
+    }
 }
 catch {
     $isWindowsEC2 = $false
+    $region = 'Unavailable'
 }
 
 
@@ -109,6 +121,7 @@ Write-Host ""
 $systemLines = @(
     "Computer Name : $computerName",
     "$netLabel       : $netName",
+    "EC2 Region    : $region",
     "Logged On User : $currentUser",
     "Date and Time  : $currentDateTime"
 )
@@ -138,6 +151,7 @@ $context = @{
     IsDomain     = $isDomain
     CurrentUser  = $currentUser
     IsWindowsEC2 = $isWindowsEC2
+    Region       = $region
 }
 
 
@@ -278,15 +292,24 @@ if ($failed -eq 0) {
     Write-Color "============================================================" 'Green'
     Write-Color "                 ALL CHECKS PASSED" 'Green'
     Write-Color "============================================================" 'Green'
-    Write-Color "You are ready to record a video walkthough of the assignment." 'Cyan'
+    Write-Color "You are ready to record a video walkthough of the assignment." 'Green'
 
 }
 else {
 
     Write-Color "============================================================" 'Red'
-    Write-Color "             SOME CHECKS NEED ATTENTION" 'Yellow'
+    Write-Color "             SOME CHECKS MAY NEED ATTENTION" 'Yellow'
     Write-Color "============================================================" 'Red'
-    Write-Color "Please review the failed checks above and make corrections before recording your walkthrough video." 'Cyan'
-    Write-Color "It is possible that some 'Failed' checks may be due to environmental factors and not a real issue." 'Cyan'
+    Write-Color "Please review the failed checks above and make corrections before recording your walkthrough video." 'Yellow'
+    Write-Color "It is possible that some 'Failed' checks may be due to environmental factors and not a real issue." 'Yellow'
+    Write-Color "IF ANY DISCREPANCIES ARE FOUND, PLEASE REFERENCE THE CANVAS ASSIGNMENT PAGE " 'Yellow'
 
 }
+
+Write-Host ""
+Write-Color "============================================================" 'Cyan'
+Write-Color '                 RECORDING NOTES' 'Cyan'
+Write-Color "============================================================" 'Cyan'
+Write-Color "1. Make sure your video contains audio narration describing what you are doing." 'Cyan'
+Write-Color "2. Make sure your video shows the Server name and the current date/time." 'Cyan'
+Write-Color "3. Make sure your video is uploaded to a location that is accessible to your instructor and grading team." 'Cyan'
