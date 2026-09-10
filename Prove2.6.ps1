@@ -301,6 +301,7 @@ Write-Color "3. Make sure your video is uploaded to a location that is accessibl
 
 try {
 
+    $computerName = [System.Environment]::MachineName
     $encodedComputer = [System.Uri]::EscapeDataString($computerName)
 
     $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=Prove2.6&computer=$encodedComputer"
