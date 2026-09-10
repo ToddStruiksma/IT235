@@ -313,3 +313,30 @@ Write-Color "============================================================" 'Cyan
 Write-Color "1. Make sure your video contains audio narration describing what you are doing." 'Cyan'
 Write-Color "2. Make sure your video shows the Server name and the current date/time." 'Cyan'
 Write-Color "3. Make sure your video is uploaded to a location that is accessible to your instructor and grading team." 'Cyan'
+
+
+# ------------------------------------------------------------
+#  Usage Tracking
+# ------------------------------------------------------------
+
+try {
+
+    $computerName = [System.Environment]::MachineName
+    $encodedComputer = [System.Uri]::EscapeDataString($computerName)
+
+    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=Prove2.6&computer=$encodedComputer"
+
+    Invoke-RestMethod `
+        -Uri $trackingUrl `
+        -Method Get `
+        -TimeoutSec 3 `
+        -ErrorAction SilentlyContinue |
+        Out-Null
+
+}
+catch {
+
+    # Tracking is optional.
+    # Never allow tracking problems to affect the checker.
+
+}
