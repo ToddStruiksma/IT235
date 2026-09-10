@@ -186,26 +186,6 @@ $tests = @(
     }
 
 
-    # --------------------------------------------------------
-    # ADD MORE CHECKS HERE
-    #
-    # Put a comma after the previous check and add another
-    # hashtable.
-    #
-    # Example:
-    #
-    # ,@{
-    #     Name   = "Computer is joined to the domain"
-    #     Expect = "Domain joined"
-    #     Test   = {
-    #         param($c)
-    #
-    #         $c.IsDomain -eq $true
-    #     }
-    # }
-    #
-    # --------------------------------------------------------
-
 )
 
 
@@ -292,7 +272,7 @@ if ($failed -eq 0) {
     Write-Color "============================================================" 'Green'
     Write-Color "                 ALL CHECKS PASSED" 'Green'
     Write-Color "============================================================" 'Green'
-    Write-Color "You are ready to record a video walkthough of the assignment." 'Green'
+    Write-Color "You are ready to record a video walkthrough of the assignment." 'Green'
 
 }
 else {
@@ -321,7 +301,6 @@ Write-Color "3. Make sure your video is uploaded to a location that is accessibl
 
 try {
 
-    $computerName = [System.Environment]::MachineName
     $encodedComputer = [System.Uri]::EscapeDataString($computerName)
 
     $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=Prove2.6&computer=$encodedComputer"
