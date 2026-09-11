@@ -265,9 +265,8 @@ Write-Color '2. Review the Prove 3.7 assignment page to ensure that all required
 Write-Color '3. Show Active Directory Domain Services is installed.' 'Cyan'
 Write-Color '4. Show the domain name and explain that the server was promoted to a domain controller.' 'Cyan'
 Write-Color '5. Show the domainadmin account and its membership in Domain Admins.' 'Cyan'
-Write-Color '6. Show the RDP login using yourdomain\domainadmin.' 'Cyan'
-Write-Color '7. Open PowerShell or Command Prompt, run whoami, and show yourdomain\domainadmin.' 'Cyan'
-Write-Color "8. Make sure your video is uploaded to a location that is accessible to the grading team." 'Cyan'
+Write-Color '6. Show logged in user via Command Line and GUI.' 'Cyan'
+Write-Color "7. Make sure your video is uploaded to a location that is accessible to the grading team." 'Cyan'
 Write-Host ''
 
 
