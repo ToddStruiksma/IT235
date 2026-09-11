@@ -70,35 +70,21 @@ try {
     $computerSystem = Get-CimInstance Win32_ComputerSystem -ErrorAction Stop
     $isDomainJoined = [bool]$computerSystem.PartOfDomain
     $domainName = $computerSystem.Domain
+    $isDomainController = $isDomainJoined -and -not [string]::IsNullOrWhiteSpace($domainName)
 }
 catch {
     $isDomainJoined = $false
 }
 
 try {
-    $isDomainController = (Get-Service -Name NTDS -ErrorAction Stop).Status -eq 'Running'
-
-    if ($isDomainController) {
-        $adDsInstalled = $true
-    }
-}
-catch {
-    $isDomainController = $false
-}
-
-try {
     Import-Module ActiveDirectory -ErrorAction Stop
-    $domain = Get-ADDomain -ErrorAction Stop
-    $domainName = $domain.DNSRoot
 
-    $domainAdmin = Get-ADUser -Identity 'domainadmin' -Properties Enabled -ErrorAction Stop
+    $domainAdmin = Get-ADUser -Identity 'domainadmin' -Properties Enabled, MemberOf -ErrorAction Stop
     $domainAdminExists = $true
     $domainAdminEnabled = [bool]$domainAdmin.Enabled
 
-    $domainAdminIsDomainAdmin = @(
-        Get-ADGroupMember -Identity 'Domain Admins' -Recursive -ErrorAction Stop |
-            Where-Object { $_.SamAccountName -eq 'domainadmin' }
-    ).Count -gt 0
+    $domainAdminGroup = Get-ADGroup -Identity 'Domain Admins' -ErrorAction Stop
+    $domainAdminIsDomainAdmin = $domainAdmin.MemberOf -contains $domainAdminGroup.DistinguishedName
 }
 catch {
     # Win32_ComputerSystem.Domain remains the fallback domain source.
