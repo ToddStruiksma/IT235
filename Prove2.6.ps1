@@ -6,6 +6,9 @@
 #
 # ============================================================
 
+$checkerName = 'Prove2.6'
+$checkerDisplayName = 'Prove 2.6'
+
 # ----------------------------
 # Display Helpers
 # ----------------------------
@@ -109,7 +112,7 @@ catch {
 
 Write-Host ""
 Write-Color "============================================================" 'Green'
-Write-Color "              IT235 - PROVE 2.6 CHECKER" 'Yellow'
+Write-Color ("              IT235 - $($checkerDisplayName.ToUpper()) CHECKER") 'Yellow'
 Write-Color "============================================================" 'Green'
 Write-Host ""
 
@@ -290,9 +293,10 @@ Write-Host ""
 Write-Color "============================================================" 'Cyan'
 Write-Color '                 RECORDING NOTES' 'Cyan'
 Write-Color "============================================================" 'Cyan'
-Write-Color "1. Make sure your video contains audio narration describing what you are doing." 'Cyan'
+Write-Color "0. Review the $checkerDisplayName assignment instructions and requirements before recording." 'Cyan'
+Write-Color '1. Include audio narration describing what you are doing.' 'Cyan'
 Write-Color "2. Make sure your video shows the Server name and the current date/time." 'Cyan'
-Write-Color "3. Make sure your video is uploaded to a location that is accessible to your instructor and grading team." 'Cyan'
+Write-Color '3. Upload the video to a location accessible to the grading team.' 'Cyan'
 
 
 # ------------------------------------------------------------
@@ -304,7 +308,7 @@ try {
     $computerName = [System.Environment]::MachineName
     $encodedComputer = [System.Uri]::EscapeDataString($computerName)
 
-    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=Prove2.6&computer=$encodedComputer"
+    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=$checkerName&computer=$encodedComputer"
 
     Invoke-RestMethod `
         -Uri $trackingUrl `

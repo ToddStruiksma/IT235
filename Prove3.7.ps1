@@ -6,6 +6,9 @@
 #
 # ============================================================
 
+$checkerName = 'Prove3.7'
+$checkerDisplayName = 'Prove 3.7'
+
 # ----------------------------
 # Display Helpers
 # ----------------------------
@@ -115,7 +118,7 @@ $displayDomain = if ($domainName) { $domainName } else { 'Not detected' }
 
 Write-Host ''
 Write-Color '============================================================' 'Green'
-Write-Color '              IT235 - PROVE 3.7 CHECKER' 'Yellow'
+Write-Color ("              IT235 - $($checkerDisplayName.ToUpper()) CHECKER") 'Yellow'
 Write-Color '============================================================' 'Green'
 Write-Host ''
 
@@ -260,13 +263,13 @@ Write-Host ''
 Write-Color '============================================================' 'Cyan'
 Write-Color '                 RECORDING NOTES' 'Cyan'
 Write-Color '============================================================' 'Cyan'
-Write-Color '1. Make sure your video contains audio narration describing what you are doing.' 'Cyan'
-Write-Color '2. Review the Prove 3.7 assignment page to ensure that all required evidence is included in your video.' 'Cyan'
-Write-Color '3. Show Active Directory Domain Services is installed.' 'Cyan'
-Write-Color '4. Show the domain name and explain that the server was promoted to a domain controller.' 'Cyan'
-Write-Color '5. Show the domainadmin account and its membership in Domain Admins.' 'Cyan'
-Write-Color '6. Show logged in user via Command Line and GUI.' 'Cyan'
-Write-Color "7. Make sure your video is uploaded to a location that is accessible to the grading team." 'Cyan'
+Write-Color "0. Review the $checkerDisplayName assignment instructions and requirements before recording." 'Cyan'
+Write-Color '1. Include audio narration describing what you are doing.' 'Cyan'
+Write-Color '2. Show Active Directory Domain Services is installed.' 'Cyan'
+Write-Color '3. Show the domain name and explain that the server was promoted to a domain controller.' 'Cyan'
+Write-Color '4. Show the domainadmin account and its membership in Domain Admins.' 'Cyan'
+Write-Color '5. Show logged in user via Command Line and GUI.' 'Cyan'
+Write-Color '6. Upload the video to a location accessible to the grading team.' 'Cyan'
 Write-Host ''
 
 
@@ -279,7 +282,7 @@ try {
 
     $encodedComputer = [System.Uri]::EscapeDataString($computerName)
 
-    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=Prove3.7&computer=$encodedComputer"
+    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=$checkerName&computer=$encodedComputer"
 
     Invoke-RestMethod `
         -Uri $trackingUrl `
