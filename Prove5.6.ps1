@@ -33,8 +33,9 @@ function Request-AdministratorRelaunch {
 			$scriptPath = $temporaryScript
 		}
 
-		$argumentList = '-NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $scriptPath
+		$argumentList = '-NoExit -NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $scriptPath
 		$process = Start-Process -FilePath 'powershell.exe' -Verb RunAs -ArgumentList $argumentList -Wait -PassThru -ErrorAction Stop
+        
 		return $true
 	}
 	catch {
