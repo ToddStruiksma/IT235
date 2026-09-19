@@ -167,7 +167,7 @@ function Find-CandidateScheduledTasks {
 		Where-Object {
 			$taskName = [string]$_.TaskName
 			$taskName -notmatch '^\d+$' -and
-			$taskName -notin @('NewTask', 'CreateExplorerShellUnelevatedTask') -and
+			$taskName -ne 'CreateExplorerShellUnelevatedTask' -and
 			$taskName -notlike 'MicrosoftEdgeUpdateTaskMachine*' -and
 			$_.TaskPath -notlike '\Microsoft\*'
 		}
