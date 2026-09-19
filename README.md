@@ -17,3 +17,11 @@ irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove3.7.ps1 | ie
 ```powershell
 irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove4.6.ps1 | iex
 ```
+
+```powershell
+irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.4.ps1 | iex
+```
+
+```powershell
+irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.6.ps1 | iex
+```
