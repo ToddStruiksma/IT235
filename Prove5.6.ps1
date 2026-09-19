@@ -9,7 +9,6 @@
 $checkerName = 'Prove5.6'
 $checkerDisplayName = 'Prove 5.6'
 $requiredGpoName = 'Ensign Domain Policy'
-$checkerUrl = 'https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.6.ps1'
 
 function Test-IsAdministrator {
 	$identity = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -17,43 +16,12 @@ function Test-IsAdministrator {
 	return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-function Request-AdministratorRelaunch {
-	param([string]$ScriptUrl)
-
-	Write-Host 'This checker should be run as Administrator so computer-scope RSoP can be collected.' -ForegroundColor Yellow
-	$answer = Read-Host 'Relaunch this checker as Administrator now? [Y/n]'
-	if ($answer -match '^(n|no)$') { return $false }
-
-	$temporaryScript = $null
-	try {
-		$scriptPath = $PSCommandPath
-		if ([string]::IsNullOrWhiteSpace($scriptPath) -or -not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
-			$temporaryScript = Join-Path $env:TEMP ("Prove5.6-{0}.ps1" -f ([guid]::NewGuid().ToString('N')))
-			Invoke-WebRequest -Uri $ScriptUrl -UseBasicParsing -OutFile $temporaryScript -ErrorAction Stop
-			$scriptPath = $temporaryScript
-		}
-
-		$argumentList = '-NoExit -NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $scriptPath
-		$process = Start-Process -FilePath 'powershell.exe' -Verb RunAs -ArgumentList $argumentList -Wait -PassThru -ErrorAction Stop
-        
-		return $true
-	}
-	catch {
-		Write-Host "Could not relaunch as Administrator: $($_.Exception.Message)" -ForegroundColor DarkRed
-		return $false
-	}
-	finally {
-		if ($temporaryScript) {
-			Remove-Item -LiteralPath $temporaryScript -Force -ErrorAction SilentlyContinue
-		}
-	}
-}
-
 if (-not (Test-IsAdministrator)) {
-	if (Request-AdministratorRelaunch -ScriptUrl $checkerUrl) {
-		return
-	}
-	Write-Host 'Continuing without elevation. The computer-scope RSoP check may fail.' -ForegroundColor Yellow
+	Write-Host ''
+	Write-Host 'This checker must be run as Administrator.' -ForegroundColor Yellow
+	Write-Host 'Close this window, open PowerShell with Run as administrator, and run the command again:' -ForegroundColor Yellow
+	Write-Host 'irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.6.ps1 | iex' -ForegroundColor Cyan
+	return
 }
 
 function Write-Color {
