@@ -164,7 +164,13 @@ function Find-CandidateScheduledTasks {
 	# Exclude the built-in Microsoft task library so students are only shown
 	# tasks they are likely to have created themselves.
 	Get-ScheduledTask -ErrorAction SilentlyContinue |
-		Where-Object { $_.TaskPath -notlike '\Microsoft\*' }
+		Where-Object {
+			$taskName = [string]$_.TaskName
+			$taskName -notmatch '^\d+$' -and
+			$taskName -notin @('NewTask', 'CreateExplorerShellUnelevatedTask') -and
+			$taskName -notlike 'MicrosoftEdgeUpdateTaskMachine*' -and
+			$_.TaskPath -notlike '\Microsoft\*'
+		}
 }
 
 function Select-ScheduledTaskForReview {
