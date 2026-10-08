@@ -211,19 +211,19 @@ for ($i = 0; $i -lt $tests.Count; $i++) {
 
     try {
 
-        $passed = [bool](& $test.Test $context)
+        $testPassed = [bool](& $test.Test $context)
         $errorMessage = $null
 
     }
     catch {
 
-        $passed = $false
+        $testPassed = $false
         $errorMessage = $_.Exception.Message
 
     }
 
 
-    if ($passed) {
+    if ($testPassed) {
 
         Write-Color ("[{0}] {1} - PASS" -f $number, $name) 'Green'
 
@@ -245,7 +245,7 @@ for ($i = 0; $i -lt $tests.Count; $i++) {
 
     $results += [PSCustomObject]@{
         Name   = $name
-        Passed = $passed
+        Passed = $testPassed
     }
 }
 
@@ -254,23 +254,25 @@ for ($i = 0; $i -lt $tests.Count; $i++) {
 # SUMMARY
 # ============================================================
 
-$total  = @($results).Count
-$passed = @($results | Where-Object { $_.Passed }).Count
-$failed = $total - $passed
+$totalCount = @($results).Count
+$passedCount = @($results | Where-Object { $_.Passed }).Count
+$failedCount = $totalCount - $passedCount
+$scorePercent = if ($totalCount -gt 0) { [Math]::Round(($passedCount / $totalCount) * 100, 1) } else { 0 }
 
 Write-Host ""
 
 $summaryLines = @(
-    "Checks Run : $total",
-    "Passed     : $passed",
-    "Failed     : $failed"
+    "Checks Run : $totalCount",
+    "Passed     : $passedCount",
+    "Failed     : $failedCount",
+    "Score      : $scorePercent%"
 )
 
 Write-Box -Title 'Check Summary' -Lines $summaryLines
 
 Write-Host ""
 
-if ($failed -eq 0) {
+if ($failedCount -eq 0) {
 
     Write-Color "============================================================" 'Green'
     Write-Color "                 ALL CHECKS PASSED" 'Green'
@@ -305,17 +307,13 @@ Write-Color '3. Upload the video to a location accessible to the grading team.' 
 
 try {
 
-    $computerName = [System.Environment]::MachineName
     $encodedComputer = [System.Uri]::EscapeDataString($computerName)
+    $encodedUser = [System.Uri]::EscapeDataString($currentUser)
+    $encodedScore = $scorePercent.ToString([System.Globalization.CultureInfo]::InvariantCulture)
 
-    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=$checkerName&computer=$encodedComputer"
+    $trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=$checkerName&computer=$encodedComputer&user=$encodedUser&score=$encodedScore&passed=$passedCount&total=$totalCount"
 
-    Invoke-RestMethod `
-        -Uri $trackingUrl `
-        -Method Get `
-        -TimeoutSec 3 `
-        -ErrorAction SilentlyContinue |
-        Out-Null
+    Invoke-RestMethod -Uri $trackingUrl -Method Get -TimeoutSec 3 -ErrorAction SilentlyContinue | Out-Null
 
 }
 catch {

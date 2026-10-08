@@ -603,15 +603,15 @@ for ($i = 0; $i -lt $tests.Count; $i++) {
 	$number = $i + 1
 
 	try {
-		$passed = [bool](& $test.Test $context)
+		$testPassed = [bool](& $test.Test $context)
 		$errorMessage = $null
 	}
 	catch {
-		$passed = $false
+		$testPassed = $false
 		$errorMessage = $_.Exception.Message
 	}
 
-	if ($passed) {
+	if ($testPassed) {
 		Write-Color ("[{0}] {1} - PASS" -f $number, $test.Name) 'Green'
 	}
 	else {
@@ -622,7 +622,7 @@ for ($i = 0; $i -lt $tests.Count; $i++) {
 		}
 	}
 
-	if (-not $passed -and $test.Detail) {
+	if (-not $testPassed -and $test.Detail) {
 		try {
 			& $test.Detail $context
 		}
@@ -633,23 +633,26 @@ for ($i = 0; $i -lt $tests.Count; $i++) {
 
 	$results += [PSCustomObject]@{
 		Name = $test.Name
-		Passed = $passed
+		Passed = $testPassed
 	}
 }
 
-$total = @($results).Count
-$passed = @($results | Where-Object { $_.Passed }).Count
-$failed = $total - $passed
+$totalCount = @($results).Count
+$passedCount = @($results | Where-Object { $_.Passed }).Count
+$failedCount = $totalCount - $passedCount
+$scorePercent = if ($totalCount -gt 0) { [Math]::Round(($passedCount / $totalCount) * 100, 1) } else { 0 }
 
 Write-Host ''
-Write-Box -Title 'Check Summary' -Lines @(
-	"Checks Run : $total",
-	"Passed     : $passed",
-	"Failed     : $failed"
+$summaryLines = @(
+	"Checks Run : $totalCount",
+	"Passed     : $passedCount",
+	"Failed     : $failedCount",
+	"Score      : $scorePercent%"
 )
+Write-Box -Title 'Check Summary' -Lines $summaryLines
 
 Write-Host ''
-if ($failed -eq 0) {
+if ($failedCount -eq 0) {
 	Write-Color '============================================================' 'Green'
 	Write-Color '                 ALL CHECKS PASSED' 'Green'
 	Write-Color '============================================================' 'Green'
@@ -675,7 +678,9 @@ Write-Color '4. Upload the video to a location accessible to the grading team.' 
 
 try {
 	$encodedComputer = [System.Uri]::EscapeDataString($computerName)
-	$trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=$checkerName&computer=$encodedComputer"
+	$encodedUser = [System.Uri]::EscapeDataString($currentUser)
+	$encodedScore = $scorePercent.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+	$trackingUrl = "https://it235-checker.todd-struiksma.workers.dev/run?checker=$checkerName&computer=$encodedComputer&user=$encodedUser&score=$encodedScore&passed=$passedCount&total=$totalCount"
 	Invoke-RestMethod -Uri $trackingUrl -Method Get -TimeoutSec 3 -ErrorAction SilentlyContinue | Out-Null
 }
 catch {

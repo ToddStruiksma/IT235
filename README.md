@@ -4,7 +4,7 @@
 
 **2. Open PowerShell (As Administrator) on your AWS EC2 instance.**
 
-**3. Copy the command below.**
+**3. Copy the applicable command below.**
 
 ```powershell
 irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove2.6.ps1 | iex
@@ -25,3 +25,5 @@ irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.4.ps1 | ie
 ```powershell
 irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.6.ps1 | iex
 ```
+
+**4. Paste the command in PowerShell and press enter 
