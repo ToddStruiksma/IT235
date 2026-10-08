@@ -376,7 +376,7 @@ Write-Color "0. Review the $checkerDisplayName assignment instructions before re
 Write-Color '1. Show the Ensign Domain Policy GPO and its enforced link.' 'Cyan'
 Write-Color '2. Show gpresult /r or rsop.msc proving the policy is applied.' 'Cyan'
 Write-Color '3. Show all six Password Policy and four Account Lockout Policy requirements.' 'Cyan'
-Write-Color '4. Upload the video link to Canvas.' 'Cyan'
+Write-Color '4. Upload the video to a location accessible to the grading team.' 'Cyan'
 
 try {
 	$encodedComputer = [Uri]::EscapeDataString($computerName)
