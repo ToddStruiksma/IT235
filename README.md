@@ -26,4 +26,4 @@ irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.4.ps1 | ie
 irm https://raw.githubusercontent.com/ToddStruiksma/IT235/main/Prove5.6.ps1 | iex
 ```
 
-**4. Paste the command in PowerShell and press enter 
+**4. Paste the command in PowerShell and press enter.**
